@@ -11,7 +11,7 @@ typedef struct dimensions dimensions;
 
 struct rawdata {
 	uint8_t* pixels;
-	uint32_t size;
+	uint32_t size; /*size of pixel array in bytes*/
 	dimensions dim;
 };
 typedef struct rawdata rawdata;

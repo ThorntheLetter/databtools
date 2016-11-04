@@ -38,7 +38,7 @@ int main(int argc, char** argv){
 	char* infilename;
 	char* outfilename = "out";
 	int c;
-	dimensions size = {0,0};
+	dimensions size = {0};
 
 	/*argument parsing*/
 	if(argc==1){
@@ -121,14 +121,8 @@ int main(int argc, char** argv){
 	switch(informat){
 		case 'r':
 			data = rawToMem(infile);
-			if((size.height && size.width && size.height * size.width != data.size / 3) || !(size.height || size.width)){
-				fprintf(stderr, "error: invalid dimensions\n\n");
-				return 1;
-			}
-			*(size.height ? &data.dim.height : &data.dim.width) = size.height ? : size.width; 
-			*(data.dim.height ? &data.dim.width : &data.dim.height) = size.height ? data.size / (3 * size.height) : data.size / (3 * size.width); 
-			
 			break;
+
 		case 'b':
 			data = bmpToMem(infile);
 			break;
@@ -137,6 +131,15 @@ int main(int argc, char** argv){
 		return 3;
 	}
 	fclose(infile);
+
+	if(outformat != 'R' && (size.width || size.height)){
+		if((size.height && size.width && size.height * size.width != data.size / 3) || (size.height && ((data.size % size.height) != 0)) || (size.width && ((data.size % size.width) != 0))){
+			fprintf(stderr, "error: invalid dimensions, there are %d pixels\n\n", data.size / 3);
+			return 1;	
+		}
+		*(size.height ? &data.dim.height : &data.dim.width) = size.height ? : size.width; 
+		*(size.height ? &data.dim.width : &data.dim.height) = size.height ? data.size / (3 * size.height) : data.size / (3 * size.width);
+	}
 
 	FILE* outfile = fopen(outfilename, "wb");
 	if(!outfile){
@@ -147,7 +150,7 @@ int main(int argc, char** argv){
 			memToRaw(data, outfile);
 			break;
 		case 'B':
-			/*bmp coming later*/
+			memToBmp(data, outfile);
 			break;
 	}
 

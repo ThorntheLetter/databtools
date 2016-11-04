@@ -1,0 +1,5 @@
+*.bmp
+*.raw
+
+/bin/*
+/build/

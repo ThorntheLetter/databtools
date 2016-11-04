@@ -16,7 +16,7 @@ rawdata rawToMem(FILE* f){
 	return r;
 }
 
-int memToRaw(rawdata r, FILE* f){	/*i am really bad at names*/
+int memToRaw(rawdata r, FILE* f){
 	if(fwrite(r.pixels, 1, r.size, f) != r.size){
 		return 1;
 	}
